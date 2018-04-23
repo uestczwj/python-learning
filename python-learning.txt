@@ -70,12 +70,20 @@
 		$ chmod a+x hello.py
 		$./hello.py
 		
-1.2 input和print函数
+1.2 input和print, pprint函数
 	1. input函数输入字符串
 		num = int(input('Enter a number: '))   # int(str) : 把字符串str转换为int
 	
 	2. print函数: 输出n个字符串(n >= 1)
-
+	
+	3.  import sys
+		import pprint
+		pprint.pprint(sys.paht)
+			['',
+			 '/opt/anaconda3/lib/python36.zip',
+			 '/opt/anaconda3/lib/python3.6',
+			 '/opt/anaconda3/lib/python3.6/lib-dynload',
+			 '/opt/anaconda3/lib/python3.6/site-packages']
 		
 第二章 列表和元组
 
@@ -1296,4 +1304,558 @@ isprintable、 isspace、 istitle、 isupper。
     对它执行索引或切片操作，也不能直接对它调用列表的方法。要执行这些操作，可先使用list对
     返回的对象进行转换
 	
+5.5.5 跳出循环
+
+1. break
+
+from math import sqrt
+for n in range(99, 0, -1):
+	root = sqrt(n)
+	if root == int(root):
+		print(n)
+		break
+		
+2. continue
 	
+for n in range(101):
+	if n % 2 != 0: continue
+	print(n)
+		
+3. while TRUE / break
+
+while True:
+    n = input('Please enter a even number:')
+    if int(n) % 2 != 0 : break
+
+5.5.6 循环中的 else 子句
+while True:
+    inputStr = input('Please enter a integer number:')
+    inputNum = int(inputStr)
+    
+    if inputNum > 0 :
+        print("{} > 0".format(inputNum))
+    elif inputNum == 0 :
+        print("{} == 0".format(inputNum))
+    else:
+        print("{} < 0".format(inputNum))
+		
+5.6 简单推导
+
+	列表推导是一种从其他列表创建列表的方式，类似于数学中的集合推导。列表推导的工作原理非常简单，有点类似于for循环。
+
+r = range(10)
+s = [x * x for x in r]
+print(s)
+
+[0, 1, 4, 9, 16, 25, 36, 49, 64, 81]	
+
+s = [x * x for x in r if x > 0]
+print(s)
+[1, 4, 9, 16, 25, 36, 49, 64, 81]
+
+	还可添加更多的for部分。
+	
+>>> [(x, y) for x in range(3) for y in range(3)]
+[(0, 0), (0, 1), (0, 2), (1, 0), (1, 1), (1, 2), (2, 0), (2, 1), (2, 2)]
+
+	作为对比，下面的两个for循环创建同样的列表：
+	
+result = []
+for x in range(3):
+for y in range(3)
+result.append((x, y))
+
+	与以前一样，使用多个for部分时，也可添加if子句。
+>>> girls = ['alice', 'bernice', 'clarice']
+>>> boys = ['chris', 'arnold', 'bob']
+>>> [b+'+'+g for b in boys for g in girls if b[0] == g[0]]
+['chris+clarice', 'arnold+alice', 'bob+bernice']
+
+5.7 三人行 ： pass、 del和exec。
+
+5.7.1 什么都不做: 有时候什么都不用做。这种情况不多，但一旦遇到，知道可使用pass语句大有裨益。
+>>> pass
+>>>
+
+if name == 'Ralph Auldus Melish':
+	print('Welcome!')
+elif name == 'Enid':
+	# 还未完成……
+	pass
+elif name == 'Bill Gates':
+	print('Access Denied')
+	
+5.7.2 使用 del 删除
+
+	对于你不再使用的对象， Python通常会将其删除（因为没有任何变量或数据结构成员指向它） 。
+	
+5.7.3 使用 exec 和 eval 执行字符串及计算其结果
+
+1. exec : 函数exec将字符串作为代码执行。
+>>> exec("print('Hello, world!')")
+Hello, world!
+
+2. eval: eval是一个类似于exec的内置函数。 exec执行一系列Python语句，而eval计算用字符串表示的Python表达式的值，
+		并返回结果（exec什么都不返回，因为它本身是条语句）。例如，你可使用如下代码来创建一个Python计算器：
+		
+express = input("Enter an arithmetic expression: ")
+value = eval(express)
+print(value)
+
+Enter an arithmetic expression: 1 + 2 * 3
+42
+
+
+第6章 抽象
+
+	本章介绍如何将语句组合成函数
+
+6.1 懒惰是一种美德
+	提取一个功能到一个函数中.
+	
+6.2 抽象和结构
+	抽象可节省人力，但实际上还有个更重要的优点：抽象是程序能够被人理解的关键所在（无论对编写程序还是阅读程序来说，这都至关重要）。
+
+6.3 自定义函数
+>>> callable(abs)
+True
+>>> callable(value)
+False
+>>> 
+
+def hello(name):
+	return 'Hello, ' + name + '!'
+	
+6.3.1 给函数编写文档	
+
+def square(x):
+	'Calculates the square of the number x.'
+	return x * x	
+	
+print('square.__doc__ : ' , square.__doc__)
+
+6.3.2 其实并不是函数的函数(类似过程的概念)
+
+	警告 不要让这种默认行为带来麻烦。如果你在if之类的语句中返回值，务必确保其他分支也返回值，以免在调用者期望函数返回一个序列时（举个例子），不小心返回了None。
+	
+6.4 参数魔法
+	
+1. python中的函数应从函数返回所有需要的值（如果需要返回多个值，就以元组的方式返回它们）。	
+
+
+	有时候，参数的排列顺序可能难以记住，尤其是参数很多时。为了简化调用工作，可指定参数的名称。
+	
+def hello_1(greeting, name):
+	print('{}, {}!'.format(greeting, name))
+
+>>>hello_1(greeting='Hello', name='world')
+Hello, world!  
+	在这里，参数的顺序无关紧要。
+	
+>>> store('Mr. Brainsample', 10, 20, 13, 5)
+可以像下面这样做：
+>>> store(patient='Mr. Brainsample', hour=10, minute=20, day=13, month=5)
+然而，关键字参数最大的优点在于，可以指定默认值。
+
+def hello_3(greeting='Hello', name='world'):
+	print('{}, {}!'.format(greeting, name))
+
+	像这样给参数指定默认值后，调用函数时可不提供它！可以根据需要，一个参数值也不提供、提供部分参数值或提供全部参数值。
+	
+6.4.4 收集参数
+	
+def print_params(*params):
+	print(params)	
+	
+>>>print_params('Testing')
+('Testing',)	
+
+>>> print_params(1, 2, 3)
+(1, 2, 3)
+	
+def print_params_2(title, *params):
+	print(title)
+	print(params)
+	
+并尝试调用它：
+>>> print_params_2('Params:', 1, 2, 3)
+Params:
+(1, 2, 3)
+	因此星号意味着收集余下的位置参数。如果没有可供收集的参数， params将是一个空元组。
+>>>print_params_2('Nothing:')
+Nothing:
+()	
+
+	要收集关键字参数，可使用两个星号。
+>>> def print_params_3(**params):
+... print(params)
+...
+>>> print_params_3(x=1, y=2, z=3)
+{'z': 3, 'x': 1, 'y': 2}
+	如你所见，这样得到的是一个字典而不是元组。可结合使用这些技术。
+	
+6.4.5 分配参数
+
+def add(x, y):
+	return x + y
+	
+params = (1, 2)
+>>>add(*params)
+3
+
+	因此，只有在定义函数（允许可变数量的参数） 或调用函数时（拆分字典或序列）使用，星号才能发挥作用。
+	
+6.5 作用域
+
+	变量到底是什么呢？可将其视为指向值的名称。因此，执行赋值语句x = 1后，名称x指向值1。这几乎与使用字典时一样（字典中的键指向值），
+	只是你使用的是“看不见”的字典。实际上，这种解释已经离真相不远。有一个名为vars的内置函数，它返回这个不可见的字典：
+>>> x = 1
+>>> scope = vars()
+>>> scope['x']
+1
+>>> scope['x'] += 1
+>>> x
+2
+
+6.6 递归
+
+6.7.1 本章介绍的新函数
+
+函数 									描述
+-------------------------------------------------------------------------------------
+map(func, seq[, seq, ...]) 			对序列中的所有元素执行函数
+filter(func, seq) 					返回一个列表，其中包含对其执行函数时结果为真的所有元素
+reduce(func, seq[, initial]) 		等价于 func(func(func(seq[0], seq[1]), seq[2]), ...)
+sum(seq) 							返回 seq 中所有元素的和
+apply(func[, args[, kwargs]]) 		调用函数（还提供要传递给函数的参数）
+-------------------------------------------------------------------------------------
+
+第7章  类: 再谈抽象
+
+7.1 对象魔法
+	在面向对象编程中，术语对象大致意味着一系列数据（属性）以及一套访问和操作这些数据的方法。使用对象而非全局变量和函数的原因有多个，
+	下面列出了使用对象的最重要的好处。
+	 	封装：对外部隐藏有关对象工作原理的细节。
+	 	继承：可基于通用类创建出专用类。
+		多态：可对不同类型的对象执行相同的操作，而这些操作就像“被施了魔法”一样能够正常运行。	
+
+7.2 类
+
+7.2.1 类到底是什么
+	本书前面反复提到了类，并将其用作类型的同义词。从很多方面来说，这正是类的定义---一种对象。每个对象都属于特定的类，并被称为该类的实例。
+	
+	注意 在英语日常交谈中，使用复数来表示类，如birds（鸟类）和larks（云雀） 。在Python中，约定使用单数并将首字母大写，如Bird和Lark。
+	
+7.2.2 创建自定义类
+
+class Person:
+	def set_name(self, name):
+		self.name = name
+		
+	def get_name(self):
+		return self.name
+		
+	def greet(self):
+		print("Hello, world! I'm {}.".format(self.name))
+		
+person = Person()
+person.set_name('zwj')
+person.greet()
+
+
+7.4.1 本章介绍的新函数
+
+函数 									描述
+-----------------------------------------------------------------
+callable(object) 					判断对象是否是可调用的（如是否是函数或方法）
+getattr(object,name[,default]) 		获取属性的值，还可提供默认值
+hasattr(object, name) 				确定对象是否有指定的属性
+isinstance(object, class) 			确定对象是否是指定类的实例
+issubclass(A, B) 					确定A是否是B的子类
+random.choice(sequence) 			从一个非空序列中随机地选择一个元素
+setattr(object, name, value) 		将对象的指定属性设置为指定的值
+type(object) 						返回对象的类型
+
+第8章  异常
+
+8.1 异常是什么
+
+8.2 让事情沿你指定的轨道出错
+
+8.2.1 raise 语句
+8.2.2 自定义的异常类
+8.3 捕获异常
+8.4 异常和函数
+
+第9章 魔法方法、特性和迭代器
+
+9.1 如果你使用的不是Python 3
+
+9.2 构造函数: __init__
+
+class Date:
+	def __init__(self):
+		self.__year  = 1999
+		self.__month = 9
+		self.__day   = 9
+		self.__date  = '1999-9-9'
+				
+	def set_date(self, y, m, d):
+		self.__year  = y
+		self.__month = m
+		self.__day   = d
+		self.__date = "{}-{}-{}".format(self.__year, self.__month, self.__day)		
+		
+	def get_date(self):
+		return self.__date
+		
+	def show(self):
+		print('The date is :' + self.__date)
+		
+		  
+date = Date()
+date.show()
+date.set_date(2018, 4, 22)
+date.show()
+
+9.2.1 重写普通方法和特殊的构造函数
+class Bird:
+	def __init__(self):
+		self.hungry = True
+		
+	def eat(self):
+		if self.hungry:
+			print('Aaaah ...')
+			self.hungry = False
+		else:
+			print('No, thanks!')	
+			
+		
+>>> b = Bird()
+>>> b.eat()
+Aaaah ...
+>>> b.eat()
+No, thanks!
+
+从这个示例可知，鸟进食后就不再饥饿。下面来看子类SongBird，它新增了鸣叫功能。
+class SongBird(Bird):
+	def __init__(self):
+		self.sound = 'Squawk!'
+		
+	def sing(self):
+		print(self.sound)
+		
+SongBird类使用起来与Bird类一样容易：
+
+>>> sb = SongBird()
+>>> sb.sing()
+Squawk!
+
+SongBird是Bird的子类，继承了方法eat，但如果你尝试调用它，将发现一个问题。
+>>> sb.eat()
+Traceback (most recent call last):
+File "<stdin>", line 1, in ?
+File "birds.py", line 6, in eat
+if self.hungry:
+AttributeError: SongBird instance has no attribute 'hungry
+
+9.2.2 调用未关联的超类构造函数
+本节介绍的方法主要用于解决历史遗留问题。
+
+class SongBird(Bird):
+    def __init__(self):
+        Bird.__init__(self)
+        self.sound = 'Squawk!'
+    
+    def sing(self):
+        print(self.sound)
+        
+在SongBird类中，只添加了一行，其中包含代码Bird.__init__(self)。先来证明这确实管用，再解释这到底意味着什么。
+>>> sb = SongBird()
+>>> sb.sing()
+Squawk!
+>>> sb.eat()
+Aaaah ...
+>>> sb.eat()
+No, thanks!
+
+9.2.3 使用函数 super
+如果你使用的不是旧版Python，就应使用函数super。
+
+class Bird:
+    def __init__(self):
+        self.hungry = True
+
+    def eat(self):
+        if self.hungry:
+            print('Aaaah ...')
+            self.hungry = False
+        else:
+            print("No, thanks")
+
+class SongBird(Bird):
+    def __init__(self):
+        super().__init__()
+        self.sound = 'Squawk!'
+
+    def sing(self):
+        print(self.sound)
+
+sb = SongBird()
+sb.sing()
+sb.eat()
+sb.eat()	
+
+9.3 元素访问
+    虽然__init__无疑是你目前遇到的最重要的特殊方法，但还有不少其他的特殊方法，让你能够完成很多很酷的任务。
+    本节将介绍一组很有用的魔法方法，让你能够创建行为类似于序列或映射的对象。
+
+9.5 特性
+
+9.5.1 函数 property
+
+class Rectangle:
+    def __init__ (self):
+        self.width  = 10
+        self.height = 20
+
+    def set_size(self, size):
+        self.width, self.height = size
+
+    def get_size(self):
+        return self.width, self.height
+
+    size = property(get_size, set_size)
+
+r = Rectangle()
+print(r.size)
+r.size = (150, 100)
+print(r.size)
+
+9.5.2 静态方法和类方法		
+
+静态方法的定义中没有参数self，可直接通过类来调用。类方法的定义中包含类似于self的参数，通常被命
+名为cls。对于类方法，也可通过对象直接调用，但参数cls将自动关联到类。
+
+class MyClass:
+    @staticmethod
+    def smeth():
+        print('This is a static method')
+        
+    @classmethod
+    def cmeth(cls):
+        print('This is a class method of', cls)
+        
+MyClass.smeth()
+MyClass.cmeth()
+
+result:
+This is a static method
+This is a class method of <class '__main__.MyClass'>
+
+9.6 迭代器
+
+    注意 更正规的定义是，实现了方法__iter__的对象是可迭代的，而实现了方法__next__的对象是迭代器。
+
+9.7 生成器
+    生成器是一个相对较新的Python概念。由于历史原因，它也被称为简单生成器（simple generator） 。
+
+第10章 开箱即用
+
+10.1 模块
+>>> import math
+>>> math.sin(0)
+0.0
+
+10.1.2 模块是用来下定义的
+    1. 在模块中定义函数
+    2. 在模块中添加测试代码
+    
+    一个包含有条件地执行的测试代码的模块
+# hello4.py
+def hello():
+    print("Hello, world!")
+def test():
+    hello()
+    
+if __name__ == '__main__': test()
+    
+10.1.3 让模块可用
+    1. 将模块放在正确的位置
+    
+>>> import sys, pprint
+>>> pprint.pprint(sys.path)
+['C:\\Python35\\Lib\\idlelib',
+'C:\\Python35',
+'C:\\Python35\\DLLs',
+'C:\\Python35\\lib',
+'C:\\Python35\\lib\\plat-win',
+'C:\\Python35\\lib\\lib-tk',
+'C:\\Python35\\lib\\site-packages'
+
+2. 告诉解释器到哪里去查找
+
+10.1.4 包
+为组织模块，可将其编组为包（package） 。包其实就是另一种模块，但有趣的是它们可包含其
+他模块。模块存储在扩展名为.py的文件中，而包则是一个目录。要被Python视为包，目录必须包含
+文件__init__.py。如果像普通模块一样导入包，文件__init__.py的内容就将是包的内容。例如，如果
+有一个名为constants的包，而文件constants/__init__.py包含语句PI = 3.14，就可以像下面这样做：
+import constants
+print(constants.PI)
+要将模块加入包中，只需将模块文件放在包目录中即可。你还可以在包中嵌套其他包。例如，
+要创建一个名为drawing的包，其中包含模块shapes和colors，需要创建如表10-1所示的文件和目
+录（UNIX路径名）。    
+
+10.2 探索模块
+
+10.2.1 模块包含什么
+1. 使用dir
+2. 变量__all_
+
+10.3 标准库：一些深受欢迎的模块
+10.3.1 sys
+模块sys让你能够访问与Python解释器紧密相关的变量和函数，
+
+模块sys中一些重要的函数和变量
+函数/变量 描 述
+argv 命令行参数，包括脚本名
+exit([arg]) 退出当前程序，可通过可选参数指定返回值或错误消息
+modules 一个字典，将模块名映射到加载的模块
+path 一个列表，包含要在其中查找模块的目录的名称
+platform 一个平台标识符，如sunos5或win32
+stdin 标准输入流——一个类似于文件的对象
+stdout 标准输出流——一个类似于文件的对象
+stderr 标准错误流——一个类似于文件的对象
+
+
+10.3.2 os
+模块os让你能够访问多个操作系统服务。
+
+模块os中一些重要的函数和变量
+函数/变量 描 述
+environ 包含环境变量的映射
+system(command) 在子shell中执行操作系统命令
+sep 路径中使用的分隔符
+pathsep 分隔不同路径的分隔符
+linesep 行分隔符（'\n'、 '\r'或'\r\n'）
+urandom(n) 返回n个字节的强加密随机数据
+
+
+10.3.3 fileinput
+模块fileinput中一些重要的函数
+函 数 描 述
+input([files[, inplace[, backup]]]) 帮助迭代多个输入流中的行
+filename() 返回当前文件的名称
+lineno() 返回（累计的）当前行号
+filelineno() 返回在当前文件中的行号
+isfirstline() 检查当前行是否是文件中的第一行
+isstdin() 检查最后一行是否来自sys.stdin
+nextfile() 关闭当前文件并移到下一个文件
+close() 关闭序列
+
+
+
+
+
+
+
