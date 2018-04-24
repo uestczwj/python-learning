@@ -385,13 +385,33 @@
 													>>> y
 													[1, 2, 4, 6, 7, 9]	
 	
-	14. 非列表排序函数:sorted	为获取排序后的列表的副本，另一种方式是使用函数sorted。
+	14. 非列表排序函数:sorted为获取排序后的列表的副本，另一种方式是使用函数sorted。
 		>>> x = [4, 6, 2, 1, 7, 9]
 		>>> y = sorted(x)
 		>>> x
 		[4, 6, 2, 1, 7, 9]
 		>>> y
 		[1, 2, 4, 6, 7, 9]
+		
+		按绝对值大小排序：
+		>>> l = [36, 5, -12, 9, -21]
+		>>> l1 = sorted(l, key=abs)
+		>>> l1
+		[5, 9, -12, -21, 36]
+		>>> l
+		[36, 5, -12, 9, -21]
+		
+		默认情况下，对字符串排序，是按照 ASCII 的大小比较的，由于'Z' < 'a'，结果，大写字母 Z 会排在小写字母 a 的前面。			
+		>>> sorted(['bob', 'about', 'Zoo', 'Credit'])
+		['Credit', 'Zoo', 'about', 'bob']
+
+		忽略大小写来比较两个字符串，实际上就是先把字符串都变成大写（或者都变成小写），再比较。
+		>>> sorted(['bob', 'about', 'Zoo', 'Credit'], key=str.lower)
+		['about', 'bob', 'Credit', 'Zoo']
+		
+		要进行反向排序，不必改动 key 函数，可以传入第三个参数 reverse=True：
+		>>> sorted(['bob', 'about', 'Zoo', 'Credit'], key=str.lower, reverse=True)
+		['Zoo', 'Credit', 'bob', 'about']
 
 	实际上，sorted函数用于可迭代的对象，但总是返回一个列表②。
 	
@@ -1371,6 +1391,14 @@ result.append((x, y))
 >>> [b+'+'+g for b in boys for g in girls if b[0] == g[0]]
 ['chris+clarice', 'arnold+alice', 'bob+bernice']
 
+生成excel的sheet表格的表头(ord函数: 字符--> ASCII码值, ord函数: ASCII码值 ---> 字符)
+letters_ascii  = range(ord('A'), ord('Z')+1)
+upper_letters  = list(chr(l) for l in letters_ascii)
+combine_letter = [chr(m) + chr(n) for m in letters_ascii for n in letters_ascii]
+upper_letters.extend(combine_letter)
+excel_sheet_head = upper_letters.copy()
+print(excel_sheet_head)
+
 5.7 三人行 ： pass、 del和exec。
 
 5.7.1 什么都不做: 有时候什么都不用做。这种情况不多，但一旦遇到，知道可使用pass语句大有裨益。
@@ -1529,6 +1557,180 @@ reduce(func, seq[, initial]) 		等价于 func(func(func(seq[0], seq[1]), seq[2])
 sum(seq) 							返回 seq 中所有元素的和
 apply(func[, args[, kwargs]]) 		调用函数（还提供要传递给函数的参数）
 -------------------------------------------------------------------------------------
+
+1. map函数
+map()函数接收两个参数，一个是函数，一个是 Iterable，map 将传入的函数依次作用到序列的每个元素，并把结果作为新的Iterator 返回。
+
+>>> l = list(range(1, 10))
+>>> def f(x):
+...     return x * x
+... 
+>>> r = map(f, l)
+>>> print(list(l))
+[1, 2, 3, 4, 5, 6, 7, 8, 9]
+>>> 
+
+不需要 map()函数，写一个循环，也可以计算出结果：
+L = []
+for n in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
+L.append(f(n))
+print(L)
+但是，从上面的循环代码，能一眼看明白“把 f(x)作用在 list的每一个元素并把结果生成一个新的 list”吗？
+所以， map()作为高阶函数，事实上它把运算规则抽象了，因此，我们不但可以计算简单的 f(x)=x2，还可以计算任意复杂的函数，比如，把这个
+list 所有数字转为字符串：
+>>> list(map(str, [1, 2, 3, 4, 5, 6, 7, 8, 9]))
+['1', '2', '3', '4', '5', '6', '7', '8', '9']
+只需要一行代码。
+
+2. reduce函数
+
+reduce 把一个函数作用在一个序列[x1, x2, x3, ...]上，这个函数必须接收两个参数， reduce 把结果继续和序列的下一个元
+素做累积计算，其效果就是：
+reduce(f, [x1, x2, x3, x4]) = f(f(f(x1, x2), x3), x4)
+比方说对一个序列求和，就可以用 reduce 实现：
+>>> from functools import reduce
+>>> def add(x, y):
+	... return x + y
+...
+>>> reduce(add, [1, 3, 5, 7, 9])
+25
+当然求和运算可以直接用 Python 内建函数 sum()，没必要动用 reduce。但是如果要把序列[1, 3, 5, 7, 9]变换成整数 13579， reduce 就可以派上用场
+
+>>> from functools import reduce
+>>> def fn(x, y):
+... return x * 10 + y
+...
+>>> reduce(fn, [1, 3, 5, 7, 9])
+13579
+这个例子本身没多大用处，但是，如果考虑到字符串 str 也是一个序列，对上面的例子稍加改动，配合 map()，我们就可以写出把 str 转换为 int的函数：
+>>> from functools import reduce
+>>> def fn(x, y):
+	... return x * 10 + y
+...
+>>> def char2num(s):
+... 	return {'0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9}[s]
+...
+>>> reduce(fn, map(char2num, '13579'))
+13579
+整理成一个 str2int 的函数就是：
+from functools import reduce
+def str2int(s):
+	def fn(x, y):
+		return x * 10 + y
+	def char2num(s):
+		return {'0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9}[s]
+	return reduce(fn, map(char2num, s))
+	
+还可以用 lambda 函数进一步简化成：
+from functools import reduce
+def char2num(s)
+	return {'0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9}[s]
+def str2int(s):
+	return reduce(lambda x, y: x * 10 + y, map(char2num, s))
+	
+也就是说，假设 Python 没有提供 int()函数，你完全可以自己写一个把字符串转化为整数的函数，而且只需要几行代码！
+
+3. sum函数 : sum()函数可以接受一个list并求和
+>>> l = list(range(1, 10))
+>>> sum(l)
+45
+
+4. filter函数: filter()函数用于过滤序列。
+	和 map()类似， filter()也接收一个函数和一个序列。和 map()不同的时，filter()把传入的函数依次作用于每个元素，然后根据返回值是 True 还
+	是 False 决定保留还是丢弃该元素。例如，在一个 list 中，删掉偶数，只保留奇数，可以这么写：
+
+def is_odd(n):
+	return n % 2 == 1
+		
+list(filter(is_odd, [1, 2, 4, 5, 6, 9, 10, 15]))
+# 结果: [1, 5, 9, 15]	
+
+5. apply函数: 
+
+	apply(func [, args [, kwargs ]]) 函数用于当函数参数已经存在于一个元组或字典中时，间接地调用函数。args是一个包含将要提供给函数
+	的按位置传递的参数的元组。如果省略了args，任 何参数都不会被传递，kwargs是一个包含关键字参数的字典。 
+	apply()的返回值就是func()的返回值，apply()的元素参数是有序的，元素的顺序必须和func()形式参数的顺序一致
+
+下面给几个例子来详细的说下:
+ 1)、假设是执行没有带参数的方法
+ 
+def say():
+  print('say in')
+
+apply(say)
+ 
+输出的结果是'say in'
+ 
+
+2)、函数只带元组的参数。
+ 
+def say(a, b):
+  print(a, b)
+ 
+apply(say, ("hello", "老王python"))
+ 
+输出的结果是hello,老王python
+ 
+3)、函数带关键字参数。
+ 
+def say(a=1, b=2):
+  print(a, b)
+ 
+def haha(**kw):
+  #say(kw)
+  apply(say, (), kw)
+ 
+print(haha(a='a', b='b'))
+ 
+输出的结果是:a,b
+
+6. 匿名函数
+	在 Python 中，对匿名函数提供了有限支持。还是以 map()函数为例，计算 f(x)=x2 时，除了定义一个 f(x)的函数外，还可以直接传入匿名函数：
+	>>> list(map(lambda x: x * x, [1, 2, 3, 4, 5, 6, 7, 8, 9]))
+	[1, 4, 9, 16, 25, 36, 49, 64, 81]
+	
+	通过对比可以看出，匿名函数 lambda x: x * x 实际上就是：
+	def f(x):
+		return x * x
+		
+	关键字lambda表示匿名函数，冒号前面的x表示函数参数
+
+	匿名函数有个限制，就是只能有一个表达式，不用写 return，返回值就是该表达式的结果。
+	用匿名函数有个好处，因为函数没有名字，不必担心函数名冲突。此外，匿名函数也是一个函数对象，也可以把匿名函数赋值给一个变量，再利用变量来调用该函数：
+	>>> f = lambda x: x * x
+	>>> f
+	<function <lambda> at 0x101c6ef28>
+	>>> f(5)
+	25
+		
+	同样，也可以把匿名函数作为返回值返回，比如：
+	def build(x, y):
+		return lambda: x * x + y * y
+		
+7. 装饰器
+
+	现在，假设我们要增强 now()函数的功能，比如，在函数调用前后自动打印日志，但又不希望修改 now()函数的定义，这种在代码运行期间动
+	态增加功能的方式，称之为“装饰器”（ Decorator）。
+
+	本质上， decorator 就是一个返回函数的高阶函数。所以，我们要定义一个能打印日志的 decorator，可以定义如下：
+	def log(func):
+		def wrapper(*args, **kw):
+			print('call %s():' % func.__name__)
+				return func(*args, **kw)
+		return wrapper
+
+@log
+def now():
+	print('2015-3-25')
+	
+调用 now()函数，不仅会运行 now()函数本身，还会在运行 now()函数前打印一行日志：
+>>> now()
+call now():
+2015-3-25
+把@log 放到 now()函数的定义处，相当于执行了语句：
+now = log(now)
+	
+		
 
 第7章  类: 再谈抽象
 
@@ -1732,6 +1934,96 @@ print(r.size)
 r.size = (150, 100)
 print(r.size)
 
+Python 内置的@property 装饰器就是负责把一个方法变成属性调用的：
+
+class Student(object):
+	@property
+	def score(self):
+		return self._score
+		
+	@score.setter
+	def score(self, value):
+		if not isinstance(value, int):
+			raise ValueError('score must be an integer!')
+		if value < 0 or value > 100:
+			raise ValueError('score must between 0 ~ 100!')
+			
+		self._score = value
+
+
+class Student(object):
+	@property
+	def birth(self):
+		return self._birth
+		
+	@birth.setter
+	def birth(self, value):
+		self._birth = value
+		
+	@property
+	def age(self):
+		return 2015 - self._birth
+	
+上面的 birth 是可读写属性，而age就是一个只读属性，因为age可以根据birth和当前时间计算出来
+
+
+******** 使用枚举类  **************
+from enum import Enum
+Month = Enum('Month', ('Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'))
+
+for name, member in Month.__members__.items():
+	print(name, '=>', member, ',', member.value)
+	
+value 属性则是自动赋给成员的 int 常量，默认从 1 开始计数。如果需要更精确地控制枚举类型， 可以从 Enum 派生出自定义类：
+from enum import Enum, unique
+
+@unique
+class Weekday(Enum):
+	Sun = 0 # Sun 的 value 被设定为 0
+	Mon = 1
+	Tue = 2
+	Wed = 3
+	Thu = 4
+	Fri = 5
+	Sat = 6
+	
+@unique 装饰器可以帮助我们检查保证没有重复值。
+
+访问这些枚举类型可以有若干种方法：
+>>> day1 = Weekday.Mon
+>>> print(day1)
+Weekday.Mon
+>>> print(Weekday.Tue)
+Weekday.Tue
+>>> print(Weekday['Tue'])
+Weekday.Tue
+>>> print(Weekday.Tue.value)
+2
+>>> print(day1 == Weekday.Mon)
+True
+>>> print(day1 == Weekday.Tue)
+False
+>>> print(Weekday(1))
+Weekday.Mon
+>>> print(day1 == Weekday(1))
+True
+>>> Weekday(7)
+Traceback (most recent call last):
+...
+ValueError: 7 is not a valid Weekday
+>>> for name, member in Weekday.__members__.items():
+... print(name, '=>', member)
+...
+Sun => Weekday.Sun
+Mon => Weekday.Mon
+Tue => Weekday.Tue
+Wed => Weekday.Wed
+Thu => Weekday.Thu
+Fri => Weekday.Fri
+Sat => Weekday.Sat
+
+可见，既可以用成员名称引用枚举常量，又可以直接根据 value 的值获得枚举常量。
+
 9.5.2 静态方法和类方法		
 
 静态方法的定义中没有参数self，可直接通过类来调用。类方法的定义中包含类似于self的参数，通常被命
@@ -1753,12 +2045,174 @@ result:
 This is a static method
 This is a class method of <class '__main__.MyClass'>
 
-9.6 迭代器
+9.6 生成器
+    如果列表元素可以按照某种算法推算出来，那我们是否可以在循环的过程中不断推算出后续的元素呢？这样就不必创建完整的 list，
+	从而节省大量的空间。在 Python 中，这种一边循环一边计算的机制，称为生成器： generator。
+	
+	创建generator第一种方法很简单，只要把一个列表生成式的[]改成()，就创建了一个 generator：
+>>> L = [x * x for x in range(10)]
+>>> L
+[0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+>>> g = (x * x for x in range(10))
+>>> g
+<generator object <genexpr> at 0x1022ef630>
+创建 L 和 g 的区别仅在于最外层的[]和()， L 是一个 list，而 g 是一个generator。
+我们可以直接打印出 list 的每一个元素，但我们怎么打印出 generator 的每一个元素呢？
+如果要一个一个打印出来，可以通过 next()函数获得 generator 的下一个返回值：
+>>> next(g)
+0
+>>> next(g)
+1
+>>> next(g)
+4
+>>> next(g)	
+
+generator 保存的是算法，每次调用 next(g)，就计算出 g 的下一个元素的值，直到计算到最后一个元素，没有更多的元素时，抛出StopIteration 的错误。
+
+方法2: 使用for 循环，因为 generator 也是可迭代对象
+>>> g = (x * x for x in range(10))
+>>> for n in g:
+... 	print(n)
+...
+
+创建了一个 generator 后，基本上永远不会调用 next()，而是通过 for 循环来迭代它，并且不需要关心 StopIteration 的错误。
+
+
+斐波拉契数列用列表生成式写不出来，但是，用函数把它打印出来却很容易：
+def fib(max):
+	n, a, b = 0, 0, 1
+	while n < max:
+		print(b)
+		a, b = b, a + b
+		n = n + 1
+	return 'done'
+	
+仔细观察，可以看出， fib 函数实际上是定义了斐波拉契数列的推算规则，可以从第一个元素开始，推算出后续任意的元素，这种逻辑其实非常类似 generator。	
+
+要把fib函数变成generator，只需要把 print(b)改为 yield b 就可以了：
+def fib(max):
+	n, a, b = 0, 0, 1
+	while n < max:
+		yield b
+		a, b = b, a + b
+		n = n + 1
+	return 'done'
+	
+这就是定义 generator 的另一种方法。如果一个函数定义中包含 yield 关键字，那么这个函数就不再是一个普通函数，而是一个generator:
+>>> f = fib(6)
+>>> f
+<generator object fib at 0x104feaaa0>
+
+>>> type(fib)
+<class 'function'>
+>>> f = fib(10)
+>>> type(f)
+<class 'generator'>
+
+这里，最难理解的就是 generator 和函数的执行流程不一样。函数是顺序执行，遇到 return 语句或者最后一行函数语句就返回。
+而变成generator的函数，在每次调用next()的时候执行，遇到yield语句返回，再次执行时从上次返回的yield语句处继续执行。
+
+举个简单的例子，定义一个 generator，依次返回数字 1， 3， 5：
+def odd():
+	print('step 1')
+	yield 1
+	print('step 2')
+	yield(3)
+	print('step 3')
+	yield(5)
+
+调用该 generator 时，首先要生成一个 generator 对象，然后用 next()函数不断获得下一个返回值：
+>>> o = odd()
+>>> next(o)
+step 1
+1
+>>> next(o)
+step 2
+3
+>>> next(o)
+step 3
+5
+>>> next(o)
+Traceback (most recent call last):
+File "<stdin>", line 1, in <module>
+StopIteration
+
+请注意区分普通函数和 generator 函数，普通函数调用直接返回结果：
+>>> r = abs(6)
+>>> r
+6
+generator 函数的“调用”实际返回一个 generator 对象：
+>>> g = fib(6)
+>>> g
+<generator object fib at 0x1022ef948>
+
+9.7 迭代器
 
     注意 更正规的定义是，实现了方法__iter__的对象是可迭代的，而实现了方法__next__的对象是迭代器。
+	
+我们已经知道，可以直接作用于 for 循环的数据类型有以下几种：一类是集合数据类型，如 list、 tuple、 dict、 set、 str 等；
+一类是 generator，包括生成器和带 yield 的 generator function。这些可以直接作用于 for 循环的对象统称为可迭代对象： Iterable。
+可以使用 isinstance()判断一个对象是否是 Iterable 对象：
+>>> from collections import Iterable
+>>> isinstance([], Iterable)
+True
+>>> isinstance({}, Iterable)
+True
+>>> isinstance('abc', Iterable)
+True
+>>> isinstance((x for x in range(10)), Iterable)	
+True
+>>> isinstance(100, Iterable)
+False
 
-9.7 生成器
-    生成器是一个相对较新的Python概念。由于历史原因，它也被称为简单生成器（simple generator） 。
+而生成器不但可以作用于 for 循环，还可以被 next()函数不断调用并返回下一个值，直到最后抛出 StopIteration 错误表示无法继续返回下一个
+值了。可以被 next()函数调用并不断返回下一个值的对象称为迭代器：Iterator。
+
+可以使用 isinstance()判断一个对象是否是 Iterator 对象
+
+>>> from collections import Iterator
+>>> isinstance((x for x in range(10)), Iterator)
+True
+>>> isinstance([], Iterator)
+False
+>>> isinstance({}, Iterator)
+False
+>>> isinstance('abc', Iterator)
+False
+
+生成器都是 Iterator 对象，但 list、 dict、 str 虽然是 Iterable，却不是Iterator。
+
+把 list、 dict、 str 等 Iterable 变成 Iterator 可以使用 iter()函数：
+>>> isinstance(iter([]), Iterator)
+True
+>>> isinstance(iter('abc'), Iterator)
+True
+
+为什么 list、 dict、 str 等数据类型不是 Iterator？这是因为 Python 的 Iterator 对象表示的是一个数据流， 
+Iterator 对象可以被 next()函数调用并不断返回下一个数据，直到没有数据时抛出StopIteration 错误。
+可以把这个数据流看做是一个有序序列，但我们却不能提前知道序列的长度，只能不断通过 next()函数实现按需计算下一
+个数据，所以 Iterator 的计算是惰性的，只有在需要返回下一个数据时它才会计算。Iterator 甚至可以表示一个无限大的数据流，
+例如全体自然数。而使用list 是永远不可能存储全体自然数的。
+
+小结
+凡是可作用于 for 循环的对象都是 Iterable 类型；凡是可作用于 next()函数的对象都是 Iterator 类型，它们表示一个惰性
+计算的序列；集合数据类型如 list、 dict、 str 等是 Iterable 但不是 Iterator，不过可以通过 iter()函数获得一个 Iterator 对象。
+Python 的 for 循环本质上就是通过不断调用 next()函数实现的，例如：
+for x in [1, 2, 3, 4, 5]:
+	pass
+	
+实际上完全等价于：
+# 首先获得 Iterator 对象:
+it = iter([1, 2, 3, 4, 5])
+
+# 循环:
+while True:
+	try:
+		# 获得下一个值:
+		x = next(it)
+	except StopIteration:
+		# 遇到 StopIteration 就退出循环
+		break
 
 第10章 开箱即用
 
@@ -1852,6 +2306,9 @@ isfirstline() 检查当前行是否是文件中的第一行
 isstdin() 检查最后一行是否来自sys.stdin
 nextfile() 关闭当前文件并移到下一个文件
 close() 关闭序列
+
+
+
 
 
 
