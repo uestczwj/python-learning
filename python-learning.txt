@@ -1,3 +1,7 @@
+sklearn		: 基本的数据清理任务
+keras  		: 对问题进行小规模实验验证想法
+tensorflow	: 在完整的数据上进行严肃的调参任务
+
 第一章 快速上手：基础知识
 
 1.1 基础
@@ -1533,6 +1537,41 @@ params = (1, 2)
 
 	因此，只有在定义函数（允许可变数量的参数） 或调用函数时（拆分字典或序列）使用，星号才能发挥作用。
 	
+https://www.zhihu.com/question/265519629/answer/310549070
+https://stackoverflow.com/questions/36901/what-does-double-star-asterisk-and-star-asterisk-do-for-parameters
+
+ 
+A good example of using both in a function is:
+
+>>> def foo(*arg,**kwargs):
+...     print arg
+...     print kwargs
+>>>
+>>> a = (1, 2, 3)
+>>> b = {'aa': 11, 'bb': 22}
+>>>
+>>>
+>>> foo(*a,**b)
+(1, 2, 3)
+{'aa': 11, 'bb': 22}
+>>>
+>>>
+>>> foo(a,**b) 
+((1, 2, 3),)
+{'aa': 11, 'bb': 22}
+>>>
+>>>
+>>> foo(a,b) 
+((1, 2, 3), {'aa': 11, 'bb': 22})
+{}
+>>>
+>>>
+>>> foo(a,*b)
+((1, 2, 3), 'aa', 'bb')
+{}
+
+	
+	
 6.5 作用域
 
 	变量到底是什么呢？可将其视为指向值的名称。因此，执行赋值语句x = 1后，名称x指向值1。这几乎与使用字典时一样（字典中的键指向值），
@@ -1764,6 +1803,40 @@ person = Person()
 person.set_name('zwj')
 person.greet()
 
+class Animal(object):
+    def run(self):
+        print('Animal is running...')
+
+class Dog(Animal):
+    def run(self):
+        print('Dog is running...')
+
+class Cat(Animal):
+    def run(self):
+        print('Cat is running...')
+
+dog = Dog()
+dog.run()
+
+
+cat = Cat()
+cat.run()
+
+class Timer(object):
+    def run(self):
+        print('Start...')
+
+def run_twice(animal):
+    animal.run()
+    animal.run()
+
+run_twice(Dog())
+run_twice(Cat())
+run_twice(Timer())
+
+
+
+
 
 7.4.1 本章介绍的新函数
 
@@ -1777,6 +1850,7 @@ issubclass(A, B) 					确定A是否是B的子类
 random.choice(sequence) 			从一个非空序列中随机地选择一个元素
 setattr(object, name, value) 		将对象的指定属性设置为指定的值
 type(object) 						返回对象的类型
+dir()								获得一个对象的所有属性和方法
 
 第8章  异常
 
