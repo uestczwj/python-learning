@@ -4,6 +4,12 @@
 Created on Fri May  4 15:59:13 2018
 
 @author: zwj
+
+默认参数一定要用不可变对象,如果是可变对象,程序运行时会有逻辑错误!
+要注意定义可变参数和关键字参数的语法:
+*args 是可变参数,args 接收的是一个 tuple;
+**kw 是关键字参数,kw 接收的是一个 dict。
+
 """
 
 def f1(a, b, c=0, *args, **kw):
@@ -22,12 +28,14 @@ f2(1, 2, d=99, ext=None)
 #最神奇的是通过一个 tuple 和 dict,你也可以调用上述函数:
 def f1(a, b, c=0, *args, **kw):
     print('a =', a, 'b =', b, 'c =', c, 'args =', args, 'kw =', kw)
+    
 args = (1, 2, 3, 4)
 kw = {'d': 99, 'x': '#'}
 f1(*args, **kw)
 
 def f2(a, b, c=0, *, d, **kw):
     print('a =', a, 'b =', b, 'c =', c, 'd =', d, 'kw =', kw)
+    
 args = (1, 2, 3)
 kw = {'d': 88, 'x': '#'}
 f2(*args, **kw)

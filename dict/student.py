@@ -6,6 +6,13 @@ Created on Thu May  3 17:02:42 2018
 @author: zwj
 """
 
+'''######## sorted funciton  ########'''
+numbers = [1, -2, 3, -4, 3, 4, -6, -7]
+print('sorted(numbers) = ', sorted(numbers))
+print('after sorted(numbers), numbers = ', numbers)
+print('sorted(numbers) by abs= ', sorted(numbers, key=abs))
+'''######## sorted funciton  ########'''
+
 index    = 0
 students = {}
 
