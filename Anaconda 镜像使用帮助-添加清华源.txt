@@ -1,0 +1,26 @@
+Anaconda 镜像使用帮助-添加清华源
+
+1. Anaconda 安装包
+	可以到 https://mirrors.tuna.tsinghua.edu.cn/anaconda/archive/ 下载。
+
+2. Anaconda 仓库的镜像，运行以下命令:
+
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+conda config --add channels https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
+conda config --set show_channel_urls yes
+
+即可添加 Anaconda Python 免费仓库。
+
+运行 sudo conda install tensorflow==1.7.0 测试一下吧。
+
+
+gedit .condarc
+
+///////////////////////////////////////////////////////////////////
+channels:
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
+  - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+  - defaults
+
+show_channel_urls: true
+///////////////////////////////////////////////////////////////////
