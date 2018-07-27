@@ -1,0 +1,10 @@
+把下载的whl按如下格式重命名：
+
+
+spyder-3.2.8-py3-none-any.whl
+
+python3.5,linux, 64bit版本：
+  PackageName-Version-cp35-cp35m-manylinux1_x86_64.whl
+
+python3.6,linux, 64bit版本：
+  PackageName-Version-cp36-cp356-manylinux1_x86_64.whl

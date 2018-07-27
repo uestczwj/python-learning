@@ -1,0 +1,27 @@
+如果报错：PIP: “Cannot uninstall 'ipython'. It is a distutils installed project and thus we cannot accurately determine…”
+则：  sudo apt-get remove ipython3
+
+安装 pip3：
+
+	$ sudo apt install python3-pip
+
+安装 Spyder 最新版本，目前即为 Spyder 3：
+
+若运行时发现报错：qtpy.PythonQtError: No Qt bindings could be found 那就安装 pyqt5（目前最新为5）……：
+
+	$sudo pip3 install -U pyqt5 , 如果太慢，则执行下面的命令安装离线安装。
+
+可以下离线下载PyQt5的whl文件，并重命名为：   pyqt5-5.9.0-cp35-cp35m-manylinux1_x86_64.whl，然后安装：
+
+        sudo pip3 install pyqt5-5.9.0-cp35-cp35m-manylinux1_x86_64.whl
+
+	$ sudo pip3 install -U spyder
+
+命令行下运行即可：
+
+	$ spyder3
+
+
+
+
+
