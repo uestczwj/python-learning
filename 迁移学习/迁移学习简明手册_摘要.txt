@@ -131,6 +131,8 @@ Long et al., 2014b, Duan et al., 2012],然后利用传统的机器学习方法�
 5.4 基于关系迁移
 
 6 第一类方法:数据分布自适应
+   ( 联合分布 & 条件分布 & 边缘分布 : https://blog.csdn.net/xiaocong1990/article/details/72027008 )
+
 
 	数据分布自适应 (Distribution Adaptation) 是一类最常用的迁移学习方法。这种方法
 的基本思想是,由于源域和目标域的数据概率分布不同,那么最直接的方式就是通过一些变
