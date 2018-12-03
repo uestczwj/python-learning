@@ -1,0 +1,75 @@
+一. 搭建Python开发环境
+   1. Download Anaconda Distribution
+   
+       https://www.anaconda.com/download/#linux
+
+   2. 安装Anaconda
+      1）修改/opt为所有人都可以访问
+
+      2）执行Anaconda3-5.3.1-Linux-x86_64.sh
+      
+      3）安装anaconda
+	    a) 接受版权：输入yes
+	    b) 修改安装路径：/opt/anaconda3
+	    c）其它安装选择根据需要输入yes or no
+
+
+   3. 打开终端，输入下面命令验证安装成功
+      conda list
+      conda list：可以显示已经安装好的库。
+  　　  conda install 库名 ：可以直接安装想要的库。如：conda install tensorflow
+  　　  conda update 库名：升级库
+
+二. 安装TensorFlow（CPU）的方法
+    1. 创建环境
+       conda create -n tensorflow python=3.6
+
+    2. 激活tensorflow环境 
+       a) source activate tensorflow
+	
+       b) 输入：python3  （注意下面的Python 3.6.7, GCC 7.3.0）
+
+	Python 3.6.7 |Anaconda, Inc.| (default, Oct 23 2018, 19:16:44) 
+	[GCC 7.3.0] on linux
+	Type "help", "copyright", "credits" or "license" for more information.
+
+
+    3. 安装最新版tensorflow
+       conda install tensorflow
+
+    4. 验证安装
+	(tensorflow)$ python
+	import tensorflow as tf
+	hello = tf.constant('Hello, TensorFlow!')
+	sess = tf.Session()
+	sess.run(hello)		
+
+三. 安装pycharm
+    1. 下载pycharm
+
+    2. 安装pycharm到/opt
+
+    3. 运行pycharm
+
+    4. 配置pycharm使用anacoda环境
+       进入PyCharm，依次点击File->Default Setting->Project Interpreter
+       选择"Conda Environment"  ---> Existing environment  ---> /.../envs/tensorflow/bin/python3.exe
+
+   5. pycharm任务栏图标显示问号解决办法
+
+     a)sudo gedit /usr/share/applications/Pycharm.desktop 
+       增加如下内容，并拉到程序任务栏，然后删除~/.local/share/applications下包含pycharm的文件。
+        
+[Desktop Entry]
+Type=Application
+Name=Pycharm
+Comment=pycharm Client
+Exec=sh /opt/pycharm-2018.3/bin/pycharm.sh
+Icon=/opt/pycharm-2018.3/bin/pycharm.png
+Terminal=false
+Categories=Application;
+
+四. 使用pycharm开发tensorflow示例
+
+    
+
