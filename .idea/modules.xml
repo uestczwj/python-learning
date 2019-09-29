@@ -2,6 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../algorithm/Python-master/.idea/Python-master.iml" filepath="$PROJECT_DIR$/../algorithm/Python-master/.idea/Python-master.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../algorithm/algorithms-master/.idea/algorithms-master.iml" filepath="$PROJECT_DIR$/../algorithm/algorithms-master/.idea/algorithms-master.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/python-learning.iml" filepath="$PROJECT_DIR$/.idea/python-learning.iml" />
     </modules>
   </component>
