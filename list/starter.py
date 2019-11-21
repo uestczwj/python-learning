@@ -41,9 +41,9 @@ Python list包含以下方法:
 
 a = ['Age','Fare', 'Parch', 'SibSp', 'Pclass']
 print('len(a) = ', len(a))      # len(a) =  5
-print(a)                        # ['Age', 'Fare', 'Parch', 'SibSp', 'Pclass']
+print(a, "----", type(a))                        # ['Age', 'Fare', 'Parch', 'SibSp', 'Pclass']
 
 b = [['Age','Fare', 'Parch', 'SibSp', 'Pclass']]
 print('len(b) = ', len(b))    # len(b) =  1
 print('len(b[0]) = ', len(b[0]))    # len(b[0]) =  5
-print(b)                      # [['Age', 'Fare', 'Parch', 'SibSp', 'Pclass']]
+print(b, "----", type(b))                      # [['Age', 'Fare', 'Parch', 'SibSp', 'Pclass']]

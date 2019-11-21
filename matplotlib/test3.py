@@ -1,6 +1,8 @@
 from time import sleep
 from threading import Thread
 import numpy as np
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 from matplotlib.widgets import Button
 
