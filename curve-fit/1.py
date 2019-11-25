@@ -1,136 +1,75 @@
-from dtw import *
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit
+import math
+#单个高斯模型，如果曲线有多个波峰，可以分段拟合
 
+def func(x, a,u, sig):
+    return a*np.exp(-(x - u) ** 2 / (2 * sig ** 2)) / (sig * math.sqrt(2 * math.pi))
+#混合高斯模型，多个高斯函数相加
 
-def add_noise(y, start, len, diverse):
-    for j in range(len):
-        y[start + j] = y[start + j] * diverse
+def func3(x, a1, a2, a3, m1, m2, m3, s1, s2, s3):
+    return a1 * np.exp(-((x - m1) / s1) ** 2) + a2 * np.exp(-((x - m2) / s2) ** 2) + a3 * np.exp(-((x - m3) / s3) ** 2)
 
-    return y
+#正弦函数拟合
 
-def generate_sinusoid(N, A, f0, fs, phi):
-    '''
-    N(int) : number of samples
-    A(float) : amplitude
-    f0(float): frequency in Hz
-    fs(float): sample rate
-    phi(float): initial phase
+#def fmax(x,a,b,c):
+#    return a*np.sin(x*np.pi/6+b)+c
+#fita,fitb=optimize.curve_fit(fmax,x,ymax,[1,1,1])
+#非线性最小二乘法拟合
+#def func(x, a, b,c):
+#    return a*np.sqrt(x)*(b*np.square(x)+c)
+#用3次多项式拟合，可推广到n次多项式，数学上可以证明，任意函数都可以表示为多项式形式
+#f1 = np.polyfit(x, y, 3)
+#p1 = np.poly1d(f1)
+#yvals = p1(x)  #拟合y值
+#也可使用yvals=np.polyval(f1, x)
 
-    return
-    x (numpy array): sinusoid signal which lenght is M
-    '''
+#拟合，并对参数进行限制，bounds里面代表参数上下限，p0是初始范围，默认是[1,1,1]
 
-    T = 1 / fs
-    n = np.arange(N)  # [0,1,..., N-1]
-    x = A * np.sin(2 * f0 * np.pi * n * T + phi)
+x=np.arange(1,206,1)
 
-    return x
+num = []<-自己的y值
 
+numhunt = []<-自己的y值
 
-def generate_sinusoid_2(t, A, f0, fs, phi):
-    '''
-    t  (float) : time length of the generated sequence
-    A  (float) : amplitude
-    f0 (float) : frequency
-    fs (float) : sample rate
-    phi(float) : initial phase
+y = np.array(num)
 
-    returns
-    x (numpy array): sinusoid signal sequence
-    '''
+yhunt = np.array(numhunt)
 
-    T = 1.0 / fs
-    N = t / T
+popt, pcov = curve_fit(func3, x, y)
 
-    return generate_sinusoid(N, A, f0, fs, phi)
+popthunt, pcovhunt = curve_fit(func, x, yhunt,p0=[2,2,2])
 
-A = 4
-f0 = 10
-fs = 500
-phi = 0
-t = 1
+ahunt = popthunt[0]
+uhunt = popthunt[1]
+sighunt = popthunt[2]
 
-x = generate_sinusoid_2(t, A, f0, fs, phi)
+a1 = popt[0]
+u1 = popt[1]
+sig1 = popt[2]
+a2 = popt[3]
+u2 = popt[4]
+sig2 = popt[5]
+a3 = popt[6]
+u3 = popt[7]
+sig3 = popt[8]
 
-n = np.arange(0, t, 1 / fs)
-plt.plot(n, x)
-plt.ylim(-A-1, A+1)
-plt.xlabel('time(s)')
-plt.ylabel('amplitude')
-plt.title('True signal in time domain')
-plt.savefig('e_DFT1.eps', bbox_inches='tight')
-plt.grid()
+yvals = func3(x,a1,u1,sig1,a2,u2,sig2,a3,u3,sig3) #拟合y值
+yhuntvals = func(x,ahunt,uhunt,sighunt) #拟合y值
+
+print(u'系数ahunt:', ahunt)
+print(u'系数uhunt:', uhunt)
+print(u'系数sighunt:', sighunt)
+
+#绘图
+plot1 = plt.plot(x, y, 's',label='insect original values')
+plot2 = plt.plot(x, yvals, 'r',label='insect polyfit values')
+plot3 = plt.plot(x, yhunt, 's',label='predator original values')
+plot4 = plt.plot(x, yhuntvals, 'g',label='predator polyfit values')
+
+plt.xlabel('date')
+plt.ylabel('Nightly catches log10(N+1)')
+plt.legend(loc=4) #指定legend的位置右下角
+plt.title('insect/predator')
 plt.show()
-
-y1 = generate_sinusoid_2(t, 0.2*A, 2*f0, fs, 0)
-y2 = generate_sinusoid_2(t, 0.1*A, 3*f0, fs, 0)
-y3 = generate_sinusoid_2(t, 0.05*A, 4*f0, fs, 0)
-y4 = generate_sinusoid_2(t, 0.025*A, 5*f0, fs, 0)
-
-
-y = add_noise(x, 100, 20, 0.91)
-y = add_noise(y,  200, 20, 1.15)
-y = add_noise(y,  300, 20, 0.97)
-y = add_noise(y,  400, 20, 1.02)
-'''
-A = 0.2
-f1 = 100
-fs = 500
-phi = 0
-t = 1
-
-x1 = generate_sinusoid_2(t, A, f1, fs, phi)
-
-n = np.arange(0, t, 1 / fs)
-plt.plot(n, x1)
-plt.ylim(-2.5, 2.5)
-plt.xlabel('time(s)')
-plt.ylabel('amplitude')
-plt.title('Noise signal in time domain')
-
-
-plt.savefig('e_DFT2.eps', bbox_inches='tight')
-plt.grid()
-plt.show()
-
-'''
-
-
-#x = x + y1 + y2 + y3 + y4
-n = np.arange(0, t, 1 / fs)
-plt.plot(n, x)
-plt.ylim(-A-1, A+1)
-plt.xlabel('time(s)')
-plt.ylabel('amplitude')
-plt.title('Input signal in time domain')
-
-plt.savefig('e_DFT3.eps', bbox_inches='tight')
-plt.grid()
-plt.show()
-
-from scipy.fftpack import fft
-
-# fft is
-X = fft(x + y)
-mX = np.abs(X)  # magnitude
-pX = np.angle(X)  # phase
-
-for i in range(1, len(pX)+1):
-    if i % f0 != 0:
-        pX[i] = 0
-
-plt.subplot(2,1,1)
-plt.plot(mX / 250)
-plt.xlabel('frequency(Hz)')
-plt.ylabel('amplitude')
-plt.title('Input signal in frequency domain')
-
-plt.savefig('e_DFT4.eps', bbox_inches='tight')
-plt.subplot(2,1,2)
-plt.plot(pX)
-plt.grid()
-plt.show()
-
-
-
